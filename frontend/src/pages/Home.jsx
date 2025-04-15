@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import "../styles/Home.css";
+import logoColibri from "../assets/logoColibri.png"; // fijate que sea .png
 
 const Home = () => {
   const navigate = useNavigate();
@@ -7,7 +8,7 @@ const Home = () => {
   return (
     <div className="home-container">
       <div className="home-hero">
-        <img src="/logo-colibri.png" alt="Colibrí de Letras" className="logo" />
+        <img src={logoColibri} alt="Colibrí de Letras" className="logo" />
         <h1>Colibrí de Letras</h1>
         <p>Donde cada historia despliega sus alas 📖✨</p>
         <div className="home-buttons">

@@ -20,7 +20,6 @@
 .auth-form {
   width: 50%;
   padding: 30px;
-  display: none;
   flex-direction: column;
   justify-content: center;
   background: var(--color-card-bg); /* blanco */

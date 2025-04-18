@@ -26,8 +26,14 @@ const Navbar = ({ cartItems }) => {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    window.location.reload();
+    setUser(null);
+    
+    // Añadir un pequeño retraso para garantizar la actualización
+    setTimeout(() => {
+      window.location.reload(); // Esto recargará la página y cargará el nuevo estado
+    }, 200);
   };
+  
 
   return (
 <nav className={`navbar ${isScrolled ? "scrolled" : ""}`}>

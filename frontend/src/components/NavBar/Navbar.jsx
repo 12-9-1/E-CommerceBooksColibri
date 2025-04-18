@@ -1,55 +1,73 @@
-import React, { useState } from 'react';
+// src/components/NavBar/Navbar.jsx
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../../context/UserContext";
+import { FaShoppingCart, FaBars } from "react-icons/fa";
+import "./Navbar.css";
 import logoColibri from "../../assets/logoColibri.png"; // fijate que sea .png
-import './NavBar.css';
 
-
-const NavBar = () => {
+const Navbar = ({ cartItems }) => {
+  const { user } = useUser();
+  const navigate = useNavigate();
+  const [isScrolled, setIsScrolled] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
 
-  const toggleOffcanvas = () => {
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleMenuToggle = () => {
     setShowMenu(!showMenu);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    window.location.reload();
+  };
+
   return (
-    <header className="navbar1">
-      <nav className="navbar d-flex justify-content-between align-items-center p-3">
-        <div className="d-flex align-items-center">
-           <img src={logoColibri} alt="Colibrí de Letras" className="logo me-2" />
-          <span className="navbar-brand">Colibrí de Letras</span>
+<nav className={`navbar ${isScrolled ? "scrolled" : ""}`}>
+  <div className="navbar-logo" onClick={() => navigate("/")}>
+    <img src={logoColibri} alt="Colibrí de Letras" className="logo" />
+  </div>
+
+      <div className="navbar-icons">
+        <FaBars className="menu-icon" onClick={handleMenuToggle} />
+        
+        <div className="cart-icon" onClick={() => navigate("/cart")}>
+          <FaShoppingCart />
+          {Array.isArray(cartItems) && cartItems.length > 0 && (
+  <span className="cart-count">{cartItems.length}</span>
+)}
+
         </div>
 
-        <div className="d-flex align-items-center">
-          <a href="/"><i className="bi bi-house me-3"></i></a>
-          <button onClick={toggleOffcanvas} className="btn btn-outline-dark">
-            ☰
-          </button>
-        </div>
-      </nav>
+        {user && (
+          <img
+            src={user.avatar || "/default-avatar.png"}
+            alt="avatar"
+            className="user-avatar"
+            onClick={() => navigate("/profile")}
+          />
+        )}
+      </div>
 
       {showMenu && (
-        <div className="offcanvas-custom">
-          <div className="offcanvas-header d-flex justify-content-between align-items-center p-3">
-            <h5>Colibrí de Letras</h5>
-            <button onClick={closeMenu} className="btn-close" />
-          </div>
-
-          <ul className="list-group list-group-flush px-3">
-            <li><a href="/">Inicio</a></li>
-            <li><a href="/pages/nosotros.html">Nosotros</a></li>
-            <li><a href="#">Contacto</a></li>
-            <li><a href="#" onClick={closeMenu}>Crear Card</a></li>
-            <li><a href="#">Compras</a></li>
+        <div className="dropdown-menu">
+          <ul>
+            <li onClick={() => navigate("/favorites")}>⭐ Favoritos</li>
+            <li onClick={() => navigate("/purchases")}>🛒 Mis Compras</li>
+            <li onClick={() => navigate("/about")}>ℹ️ Sobre Nosotros</li>
+            {user && <li onClick={handleLogout}>🚪 Cerrar Sesión</li>}
           </ul>
-
-          <div className="px-3 mt-3">
-            <input className="form-control mb-2" type="text" placeholder="Buscar..." />
-            <button className="btn btn-success w-100">Buscar</button>
-          </div>
         </div>
       )}
-    </header>
+    </nav>
   );
 };
 
-export default NavBar;     
+export default Navbar;
